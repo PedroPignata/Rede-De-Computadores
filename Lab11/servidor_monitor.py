@@ -4,7 +4,7 @@ from datetime import datetime
 import time
 
 HOST = '127.0.0.1'
-PORT = 12346 
+PORT = 12345
 
 def servidor_monitor():
     #Servidor de Monitoramento de Saúde do Sistema.

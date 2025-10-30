@@ -1,7 +1,7 @@
 import socket
 
 HOST = '127.0.0.1'
-PORT = 12346 
+PORT = 12345 
 
 def cliente_monitor():
     #Implementa o Cliente de Monitoramento do Sistema.
