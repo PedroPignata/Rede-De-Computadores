@@ -9,6 +9,7 @@ usuarios = [
     {"id": 1, "nome": "Ana Silva", "email": "ana@exemplo.com"},
     {"id": 2, "nome": "Carlos Oliveira", "email": "carlos@exemplo.com"}
 ]
+# Seus comandos POST anteriores devem ter adicionado o Pedro no ID 4.
 
 # Rota GET para listar todos os usuários
 @app.route('/usuarios', methods=['GET'])
@@ -18,32 +19,38 @@ def get_usuarios():
 # Rota POST para adicionar um novo usuário
 @app.route('/usuarios', methods=['POST'])
 def add_usuario():
-    # Obtém os dados JSON da requisição
     novo_usuario = request.json
-    
-    # Atribui um novo ID (simplesmente len(usuarios) + 1)
     novo_usuario['id'] = len(usuarios) + 1
-    
-    # Adiciona o novo usuário à lista
     usuarios.append(novo_usuario)
-    
-    # Retorna o usuário criado com o código de status 201 (Created)
     return jsonify(novo_usuario), 201
 
-# Rota GET para obter um usuário por ID
-@app.route('/usuarios/<int:usuario_id>', methods=['GET'])
-def get_usuario(usuario_id):
-    # Procura o usuário na lista pelo ID
-    # next() retorna o primeiro item que satisfaz a condição
-    # ou 'None' se não encontrar
-    usuario = next((u for u in usuarios if u['id'] == usuario_id), None)
-    
-    if usuario:
-        # Retorna o usuário encontrado
-        return jsonify(usuario)
-    else:
-        # Retorna erro 404 (Not Found) se o usuário não for encontrado
+# --- Rota Corrigida e Expandida (GET, PUT, DELETE) ---
+@app.route('/usuarios/<int:usuario_id>', methods=['GET', 'PUT', 'DELETE'])
+def gerenciar_usuario(usuario_id):
+    # Encontra o índice (posição) do usuário na lista
+    index = next((i for i, u in enumerate(usuarios) if u['id'] == usuario_id), None)
+
+    if index is None:
         return jsonify({"erro": "Usuário não encontrado"}), 404
+
+    # Lógica GET (Buscar)
+    if request.method == 'GET':
+        return jsonify(usuarios[index])
+
+    # Lógica PUT (Atualizar)
+    elif request.method == 'PUT':
+        dados_atualizados = request.json
+        
+        # Atualiza apenas os campos que vieram no body
+        usuarios[index].update(dados_atualizados)
+        usuarios[index]['id'] = usuario_id
+        
+        return jsonify(usuarios[index])
+
+    # Lógica DELETE (Remover)
+    elif request.method == 'DELETE':
+        del usuarios[index]
+        return '', 204 # Resposta 204 No Content
 
 # Inicia o servidor Flask
 if __name__ == '__main__':
