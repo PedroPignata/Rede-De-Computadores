@@ -1,78 +1,102 @@
-# Cliente (usa as APIs)
+# cliente.py
 
 import requests
-
-# Lembrete: Você precisará ter a biblioteca 'requests' instalada
-# (pip install requests)
+import time 
 
 class ClienteJWT:
-    # 🌍 Configuração de Endpoints
     def __init__(self):
-        self.url_auth = "http://localhost:5000"  # API que gera o token
-        self.url_dados = "http://localhost:5001" # API que exige o token
-        self.token = None # Onde guardaremos nosso "passe"
+        self.url_auth = "http://localhost:5000"
+        self.url_dados = "http://localhost:5001"
+        self.token = None
 
-    # 🔑 Tenta fazer login e obter o token
     def login(self, usuario, senha):
+        print(f"\n[AÇÃO] Tentando login com Usuário: {usuario}")
         try:
-            # Chama a API de Login (porta 5000)
             resposta = requests.get(f"{self.url_auth}/login/{usuario}/{senha}")
 
             if resposta.status_code == 200:
                 self.token = resposta.json()['token']
-                # \u2705 é o emoji de check mark
-                print(f"\u2705 Login realizado! Token recebido.")
+                print("✅ SUCESSO! Login realizado. Token recebido.")
                 return True
             else:
-                # \u274C é o emoji de 'X'
-                print(f"\u274C Login falhou! ({resposta.json()['erro']})")
+                print(f"❌ FALHA! Login: {resposta.json()['erro']}")
+                self.token = None 
                 return False
+
         except requests.exceptions.ConnectionError:
-            print(f"\u274C Erro de conexão. Certifique-se de que a API de Login (Porta 5000) está rodando.")
+            print("❌ ERRO DE CONEXÃO! Verifique se a API de Autenticação (5000) está rodando.")
             return False
         except Exception as e:
-            print(f"\u274C Ocorreu um erro inesperado: {e}")
+            print(f"❌ Erro inesperado: {e}")
             return False
 
-    # 🛡️ Tenta acessar a rota protegida com o token
     def buscar_dados(self):
+        print("\n[AÇÃO] Tentando acessar dados protegidos...")
+        
         if not self.token:
-            # \u26A0\uFE0F é o emoji de alerta
-            print("\u26A0\uFE0F Faça login primeiro. Token ausente.")
-            return
+            pass 
 
-        # Monta o cabeçalho (Header) padrão para JWT: 'Authorization: Bearer <token>'
-        headers = {'Authorization': f'Bearer {self.token}'}
+        headers = {'Authorization': f'Bearer {self.token}'} if self.token else {}
 
         try:
-            # Chama a API Protegida (porta 5001) enviando o token no header
             resposta = requests.get(f"{self.url_dados}/dados", headers=headers)
 
             if resposta.status_code == 200:
                 dados = resposta.json()
-                print(f"\n\u25AD Dados de {dados['usuario']}:")
+                print(f"✅ SUCESSO! Dados de {dados['usuario']} recebidos:")
                 for item in dados['dados']:
                     print(f" - {item}")
             else:
-                # Se não for 200, algo deu errado (ex: token inválido 401, usuário não encontrado 404)
-                print(f"\u274C Erro: {resposta.json()}")
-        except requests.exceptions.ConnectionError:
-            print(f"\u274C Erro de conexão. Certifique-se de que a API de Dados (Porta 5001) está rodando.")
-        except Exception as e:
-            print(f"\u274C Ocorreu um erro inesperado: {e}")
+                print(f"❌ FALHA! Resposta da API de Dados (Status {resposta.status_code}): {resposta.json()['erro']}")
 
-# --- Exemplo de Uso (Para rodar no final do arquivo) ---
+        except requests.exceptions.ConnectionError:
+            print("❌ ERRO DE CONEXÃO! Verifique se a API de Dados (5001) está rodando.")
+        except Exception as e:
+            print(f"❌ Erro inesperado: {e}")
+
+# --- ROTEIRO DE TESTES ---
 
 if __name__ == '__main__':
+    
+    # Usuário a ser usado nos testes (existe na auth_api)
+    USUARIO_VALIDO = 'joao'
+    SENHA_VALIDA = 'senha123'
+
+    # --- Teste 1: Login Bem-sucedido (e Teste de credenciais inválidas)
+    print("\n" + "="*50)
+    print("           ROTEIRO DE TESTES INICIADO")
+    print("="*50)
+
+    # 1.1 Login Bem-sucedido
+    print("\n--- Teste 1: Login Bem-sucedido ---")
     cliente = ClienteJWT()
+    cliente.login(USUARIO_VALIDO, SENHA_VALIDA)
     
-    print("--- 1. Tentativa de Login e Acesso com SUCESSO (Usuário: joao) ---")
-    if cliente.login('joao', 'senha123'):
-        cliente.buscar_dados()
+    # --- Teste 2: Acesso a Dados Protegidos (com token válido)
+    print("\n--- Teste 2: Acesso a Dados Protegidos ---")
+    cliente.buscar_dados()
     
-    print("\n--- 2. Tentativa de Acesso SEM Token (Deverá falhar) ---")
-    cliente_sem_login = ClienteJWT()
-    cliente_sem_login.buscar_dados()
+    # --- Teste 4: Token Inválido (Parte 1: Sem token) ---
+    print("\n--- Teste 4.1: Acesso Sem Token ---")
+    cliente_sem_token = ClienteJWT()
+    cliente_sem_token.buscar_dados()
     
-    print("\n--- 3. Tentativa de Login com FALHA (Senha errada) ---")
-    cliente.login('joao', 'senha_errada')
+    # --- Teste 4: Token Inválido (Parte 2: Token Malformado) ---
+    print("\n--- Teste 4.2: Acesso com Token Malformado ---")
+    cliente_malformado = ClienteJWT()
+    cliente_malformado.token = 'definitivamente.nao.e.um.token.valido' 
+    cliente_malformado.buscar_dados()
+    
+    # --- Teste 3: Token Expirado ---
+    # REQUER: Alterar 'minutes=30' para 'seconds=10' na auth_api.py E reiniciar essa API!
+    print("\n--- Teste 3: Token Expirado (Requer API de Auth com expiração de 10s) ---")
+    print("ATENÇÃO: Requer que você reinicie a API de Autenticação com o tempo de 10s!")
+    cliente_expira = ClienteJWT()
+    if cliente_expira.login(USUARIO_VALIDO, SENHA_VALIDA):
+        print("Aguardando 12 segundos para o token expirar...")
+        time.sleep(12)
+        cliente_expira.buscar_dados()
+    
+    print("\n" + "="*50)
+    print("           ROTEIRO DE TESTES CONCLUÍDO")
+    print("="*50)
