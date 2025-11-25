@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # 1. O SEU PROGRAMA (Onde vai ficar o Python/Flask)
+  monitor-app:
+    build: ./app            # Vai procurar um Dockerfile na pasta 'app'
+    container_name: meu-monitor
+    ports:
+      - "5000:5000"         # Você acessará o site em localhost:5000
+    volumes:
+      - ./app:/app          # O que você editar no PC aparece no container
+    depends_on:
+      - web-alvo
+      - db-alvo
+    environment:
+      - TZ=America/Sao_Paulo # Define o fuso horário correto
+
+  # 2. O ALVO WEB (Um site Nginx simples para testar)
+  web-alvo:
+    image: nginx:alpine
+    container_name: web-server-teste
+    ports:
+      - "8080:80"           # Você acessará esse teste em localhost:8080
+
+  # 3. O ALVO BANCO DE DADOS (Um Postgres para testar)
+  db-alvo:
+    image: postgres:13
+    container_name: db-server-teste
+    environment:
+      POSTGRES_PASSWORD: senha_secreta
+      POSTGRES_DB: banco_teste
+
+  # 4. O ALVO SMTP (Um servidor de e-mail fake chamado MailHog)
+  smtp-alvo:
+    image: mailhog/mailhog
+    container_name: smtp-server-teste
+    ports:
+      - "1025:1025"         # Porta para enviar e-mail (SMTP)
+      - "8025:8025"         # Porta para ver os e-mails no navegador
