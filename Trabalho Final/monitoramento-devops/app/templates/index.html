@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento DevOps - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-service { transition: transform 0.2s; }
+        .card-service:hover { transform: scale(1.05); }
+        .status-dot { height: 15px; width: 15px; border-radius: 50%; display: inline-block; }
+        .bg-success-pulse { animation: pulse-green 2s infinite; }
+        .bg-danger-pulse { animation: pulse-red 2s infinite; }
+        
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">🖥️ Central de Monitoramento DevOps</a>
+            <span class="text-light" id="last-update">Atualizando...</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row" id="services-container">
+            <div class="col-12 text-center mt-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>Carregando dados dos sensores...</p>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <strong>⚠️ Painel de Alertas & Segurança</strong>
+                    </div>
+                    <div class="card-body">
+                        <ul id="alert-list" class="list-group list-group-flush">
+                            <li class="list-group-item text-muted">Nenhum alerta crítico detectado no momento.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function atualizarDados() {
+            try {
+                // Chama a sua API Python
+                const response = await fetch('/api/monitorar');
+                const data = await response.json();
+                
+                const container = document.getElementById('services-container');
+                container.innerHTML = ''; // Limpa a tela antes de desenhar
+                
+                data.forEach((servico, index) => {
+                    // Define a cor (Verde = Online, Vermelho = Offline)
+                    const corStatus = servico.status_online ? 'success' : 'danger';
+                    const textoStatus = servico.status_online ? 'ONLINE' : 'OFFLINE';
+                    const icone = ['🌐', '🗄️', '📧'][index] || '🔧'; // Ícones para Web, BD, Email
+
+                    // Cria o HTML do Card
+                    const html = `
+                        <div class="col-md-4 mb-4">
+                            <div class="card card-service shadow-sm border-${corStatus}">
+                                <div class="card-header bg-${corStatus} text-white d-flex justify-content-between align-items-center">
+                                    <h5 class="m-0">${icone} ${servico.servico}</h5>
+                                    <span class="badge bg-white text-${corStatus}">${textoStatus}</span>
+                                </div>
+                                <div class="card-body">
+                                    <h2 class="card-title text-center display-6">${servico.latencia_ms} <small class="fs-6 text-muted">ms</small></h2>
+                                    <p class="card-text text-center text-muted">Tempo de Resposta</p>
+                                    <hr>
+                                    <small class="text-muted">Detalhes: ${servico.detalhes}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += html;
+                });
+
+                // Atualiza o relógio
+                const agora = new Date();
+                document.getElementById('last-update').innerText = 'Última checagem: ' + agora.toLocaleTimeString();
+
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+
+        // Roda a primeira vez imediatamente
+        atualizarDados();
+        // Configura para rodar a cada 5 segundos (5000 ms)
+        setInterval(atualizarDados, 5000);
+    </script>
+</body>
+</html>
