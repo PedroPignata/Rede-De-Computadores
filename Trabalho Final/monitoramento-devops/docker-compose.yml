@@ -1,28 +1,29 @@
 version: '3.8'
 
 services:
-  # 1. O SEU PROGRAMA (Onde vai ficar o Python/Flask)
+  # 1. SEU PROGRAMA PYTHON (Monitor)
   monitor-app:
-    build: ./app            # Vai procurar um Dockerfile na pasta 'app'
+    build: ./app
     container_name: meu-monitor
     ports:
-      - "5000:5000"         # Você acessará o site em localhost:5000
+      - "5000:5000"
     volumes:
-      - ./app:/app          # O que você editar no PC aparece no container
+      - ./app:/app          # Garante que o código que você edita é o que roda
     depends_on:
       - web-alvo
       - db-alvo
     environment:
-      - TZ=America/Sao_Paulo # Define o fuso horário correto
+      - TZ=America/Sao_Paulo    # Fuso horário correto
+      - PYTHONUNBUFFERED=1      # <--- CORREÇÃO: Mostra erros do Gmail no terminal
 
-  # 2. O ALVO WEB (Um site Nginx simples para testar)
+  # 2. ALVO WEB (Nginx)
   web-alvo:
     image: nginx:alpine
     container_name: web-server-teste
     ports:
-      - "8080:80"           # Você acessará esse teste em localhost:8080
+      - "8080:80"
 
-  # 3. O ALVO BANCO DE DADOS (Um Postgres para testar)
+  # 3. ALVO BANCO DE DADOS (Postgres)
   db-alvo:
     image: postgres:13
     container_name: db-server-teste
@@ -30,10 +31,10 @@ services:
       POSTGRES_PASSWORD: senha_secreta
       POSTGRES_DB: banco_teste
 
-  # 4. O ALVO SMTP (Um servidor de e-mail fake chamado MailHog)
+  # 4. ALVO SMTP (MailHog - Para monitorar se o serviço existe)
   smtp-alvo:
     image: mailhog/mailhog
     container_name: smtp-server-teste
     ports:
-      - "1025:1025"         # Porta para enviar e-mail (SMTP)
-      - "8025:8025"         # Porta para ver os e-mails no navegador
+      - "1025:1025"
+      - "8025:8025"

@@ -4,47 +4,74 @@ import time
 import socket
 import psycopg2
 import smtplib
+import hashlib
+import os
 from email.mime.text import MIMEText
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Variável para controlar spam de alertas (simples)
-# Armazena o último status para saber se mudou
-ultimo_status = {
-    "web": True,
-    "db": True,
-    "smtp": True
+# --- CONFIGURAÇÕES GLOBAIS ---
+ARQUIVO_VIGIADO = "protegido.conf"
+HASH_ORIGINAL = "" 
+ULTIMO_STATUS = {
+    "web": True, 
+    "db": True, 
+    "smtp": True, 
+    "seguranca": True
 }
 
-# --- FUNÇÃO DE ENVIAR E-MAIL (Requisito: Notificação) ---
-def enviar_alerta_email(servico, erro):
-    msg_content = f"""
-    ALERTA CRÍTICO DE SISTEMA
-    --------------------------
-    O serviço: {servico}
-    Está: INDISPONÍVEL (OFFLINE)
-    Data: {datetime.now()}
-    Erro técnico: {erro}
+# --- FUNÇÃO DE ENVIAR E-MAIL (VIA MAILHOG) ---
+def enviar_alerta_email(titulo, mensagem):
+    print(f"📧 Enviando alerta para MailHog: {titulo}...")
     
-    Ação recomendada: Verificar logs do container imediatamente.
-    """
+    # Configuração da Mensagem
+    msg = MIMEText(f"""
+    ALERTA CRÍTICO - MONITORAMENTO DEVOPS
+    -------------------------------------
+    Evento: {titulo}
+    Data/Hora: {datetime.now()}
     
-    msg = MIMEText(msg_content)
-    msg['Subject'] = f'CRÍTICO: {servico} caiu!'
-    msg['From'] = 'monitor@devops.local'
-    msg['To'] = 'admin@devops.local'
+    Detalhes Técnicos:
+    {mensagem}
+    
+    Ação Necessária: Verificar logs do container imediatamente.
+    """)
+    
+    # Cabeçalhos do E-mail
+    msg['Subject'] = f'🚨 ALERTA: {titulo}'
+    msg['From'] = 'sistema@monitoramento.local'  # Remetente Fictício
+    msg['To'] = 'admin@empresa.com'            # Destinatário Fictício
 
     try:
-        # Conecta no nosso container MailHog (smtp-alvo) na porta 1025
+        # Conecta no container 'smtp-alvo' na porta 1025 (Padrão do MailHog)
+        # Não precisa de senha nem SSL
         s = smtplib.SMTP('smtp-alvo', 1025)
         s.send_message(msg)
         s.quit()
-        print(f"📧 E-mail de alerta enviado para {servico}!")
+        print(f"✅ SUCESSO! Alerta enviado para o MailHog.")
     except Exception as e:
-        print(f"❌ Falha ao enviar e-mail: {e}")
+        print(f"❌ ERRO AO CONECTAR NO MAILHOG: {str(e)}")
 
-# --- FUNÇÕES DE MONITORAMENTO ---
+# --- SEGURANÇA: CÁLCULO DE HASH ---
+def calcular_hash_arquivo(caminho):
+    if not os.path.exists(caminho):
+        return None
+    with open(caminho, "rb") as f:
+        bytes = f.read()
+        return hashlib.md5(bytes).hexdigest()
+
+# Inicialização da Segurança
+if os.path.exists(ARQUIVO_VIGIADO):
+    HASH_ORIGINAL = calcular_hash_arquivo(ARQUIVO_VIGIADO)
+    print(f"🔒 Segurança iniciada. Hash: {HASH_ORIGINAL}")
+else:
+    with open(ARQUIVO_VIGIADO, 'w') as f:
+        f.write("config=padrao")
+    HASH_ORIGINAL = calcular_hash_arquivo(ARQUIVO_VIGIADO)
+    print(f"⚠️ Arquivo criado. Hash: {HASH_ORIGINAL}")
+
+# --- SENSORES ---
 
 def checar_web_server():
     url = "http://web-alvo"
@@ -59,9 +86,14 @@ def checar_web_server():
         resultado["detalhes"] = "HTTP 200 OK"
     except Exception as e:
         resultado["detalhes"] = str(e)
+    
+    # Lógica de Disparo
+    if ULTIMO_STATUS["web"] and not resultado["status_online"]:
+        enviar_alerta_email("Web Server CAIU", resultado["detalhes"])
+        ULTIMO_STATUS["web"] = False
+    elif not ULTIMO_STATUS["web"] and resultado["status_online"]:
+        ULTIMO_STATUS["web"] = True
         
-    # Lógica de Disparo de E-mail
-    verificar_mudanca_status("web", resultado["servico"], resultado["status_online"], resultado["detalhes"])
     return resultado
 
 def checar_banco_dados():
@@ -77,7 +109,12 @@ def checar_banco_dados():
     except Exception as e:
         resultado["detalhes"] = str(e)
 
-    verificar_mudanca_status("db", resultado["servico"], resultado["status_online"], resultado["detalhes"])
+    if ULTIMO_STATUS["db"] and not resultado["status_online"]:
+        enviar_alerta_email("Banco de Dados CAIU", resultado["detalhes"])
+        ULTIMO_STATUS["db"] = False
+    elif not ULTIMO_STATUS["db"] and resultado["status_online"]:
+        ULTIMO_STATUS["db"] = True
+        
     return resultado
 
 def checar_smtp():
@@ -92,18 +129,31 @@ def checar_smtp():
         resultado["detalhes"] = "Serviço SMTP respondendo"
     except Exception as e:
         resultado["detalhes"] = str(e)
+
+    if ULTIMO_STATUS["smtp"] and not resultado["status_online"]:
+        enviar_alerta_email("Servidor SMTP (MailHog) CAIU", resultado["detalhes"])
+        ULTIMO_STATUS["smtp"] = False
+    elif not ULTIMO_STATUS["smtp"] and resultado["status_online"]:
+        ULTIMO_STATUS["smtp"] = True
         
-    verificar_mudanca_status("smtp", resultado["servico"], resultado["status_online"], resultado["detalhes"])
     return resultado
 
-def verificar_mudanca_status(chave, nome_servico, esta_online, erro):
-    global ultimo_status
-    # Se estava online (True) e agora caiu (False), manda email
-    if ultimo_status[chave] and not esta_online:
-        enviar_alerta_email(nome_servico, erro)
+def checar_seguranca_arquivo():
+    hash_atual = calcular_hash_arquivo(ARQUIVO_VIGIADO)
+    status_seguro = True
+    mensagem = "Integridade verificada. Arquivo original."
     
-    # Atualiza o status atual
-    ultimo_status[chave] = esta_online
+    if hash_atual != HASH_ORIGINAL:
+        status_seguro = False
+        mensagem = f"PERIGO: O arquivo '{ARQUIVO_VIGIADO}' foi alterado!"
+
+    if ULTIMO_STATUS["seguranca"] and not status_seguro:
+        enviar_alerta_email("VIOLAÇÃO DE SEGURANÇA", mensagem)
+        ULTIMO_STATUS["seguranca"] = False
+    elif not ULTIMO_STATUS["seguranca"] and status_seguro:
+        ULTIMO_STATUS["seguranca"] = True
+        
+    return {"servico": "Integridade de Arquivos", "status_online": status_seguro, "latencia_ms": 0, "detalhes": mensagem}
 
 # --- ROTAS ---
 
@@ -116,7 +166,8 @@ def monitorar():
     r1 = checar_web_server()
     r2 = checar_banco_dados()
     r3 = checar_smtp()
-    return jsonify([r1, r2, r3])
+    r4 = checar_seguranca_arquivo()
+    return jsonify([r1, r2, r3, r4])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
