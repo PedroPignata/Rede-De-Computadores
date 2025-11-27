@@ -1,29 +1,29 @@
 version: '3.8'
 
 services:
-  # 1. SEU PROGRAMA PYTHON (Monitor)
+  # 1. PROGRAMA PYTHON
   monitor-app:
     build: ./app
     container_name: meu-monitor
     ports:
       - "5000:5000"
     volumes:
-      - ./app:/app          # Garante que o código que você edita é o que roda
+      - ./app:/app          
     depends_on:
       - web-alvo
       - db-alvo
     environment:
-      - TZ=America/Sao_Paulo    # Fuso horário correto
-      - PYTHONUNBUFFERED=1      # <--- CORREÇÃO: Mostra erros do Gmail no terminal
+      - TZ=America/Sao_Paulo    
+      - PYTHONUNBUFFERED=1      
 
-  # 2. ALVO WEB (Nginx)
+  # 2. WEB (Nginx)
   web-alvo:
     image: nginx:alpine
     container_name: web-server-teste
     ports:
       - "8080:80"
 
-  # 3. ALVO BANCO DE DADOS (Postgres)
+  # 3. BANCO DE DADOS (Postgres)
   db-alvo:
     image: postgres:13
     container_name: db-server-teste
@@ -31,7 +31,7 @@ services:
       POSTGRES_PASSWORD: senha_secreta
       POSTGRES_DB: banco_teste
 
-  # 4. ALVO SMTP (MailHog - Para monitorar se o serviço existe)
+  # 4. SMTP (MailHog)
   smtp-alvo:
     image: mailhog/mailhog
     container_name: smtp-server-teste

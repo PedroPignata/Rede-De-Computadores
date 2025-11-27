@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps Monitoring Platform</title>
+    <title>Plataforma de Monitorização DevOps</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Ícones -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
     <style>
         /* TEMA PROFISSIONAL DARK */
         body {
-            background-color: #0f111a; /* Fundo quase preto, levemente azulado (moderno) */
+            background-color: #0f111a; 
             color: #e0e0e0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -19,7 +21,7 @@
         .navbar {
             background-color: #1a1d2d !important;
             border-bottom: 1px solid #2d324e;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
         .navbar-brand {
             font-weight: 600;
@@ -31,24 +33,30 @@
 
         /* CARTÕES (CARDS) */
         .card {
-            background-color: #1a1d2d; /* Cinza escuro */
+            background-color: #1a1d2d;
             border: 1px solid #2d324e;
             border-radius: 8px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
         }
         
         /* Cabeçalho do Card */
         .card-header {
             background-color: transparent;
-            border-bottom: 1px solid #2d4e34;
+            border-bottom: 1px solid #2d324e;
             font-weight: 600;
             padding: 15px 20px;
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 0.5px;
 
-            color: #0d42f0; /* Azul Ciano Neon */
-            
+            /* Azul Ciano Neon (Para brilhar no fundo preto) */
+            color: #0dcaf0; 
+            text-shadow: 0 0 8px rgba(13, 202, 240, 0.3);
         }
 
         /* Texto de Métricas */
@@ -62,26 +70,35 @@
             color: #6c757d;
         }
 
-        /* BADGES (Etiquetas de Status) */
+        /* BADGES (Etiquetas de Estado) */
         .badge-status {
             font-size: 0.7rem;
             padding: 5px 10px;
             border-radius: 4px;
+            font-weight: 600;
         }
+        /* Verde - Operacional */
         .status-online {
-            background-color: rgba(25, 135, 84, 0.15);
-            color: #20c997; /* Verde Neon */
+            background-color: rgba(32, 201, 151, 0.15);
+            color: #20c997; 
             border: 1px solid rgba(32, 201, 151, 0.3);
         }
+        /* Amarelo - Atenção/Lentidão */
+        .status-warning {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        /* Vermelho - Crítico/Offline */
         .status-offline {
             background-color: rgba(220, 53, 69, 0.15);
-            color: #ff6b6b; /* Vermelho Neon */
+            color: #ff6b6b;
             border: 1px solid rgba(255, 107, 107, 0.3);
         }
 
         /* Painel de Alertas */
         .alert-panel {
-            background-color: #1a1d2d;
+            background-color: #151725;
             border: 1px solid #ffc107;
         }
         .alert-header {
@@ -91,7 +108,7 @@
         }
         
         .text-muted-dark {
-            color: #e2ebe3 !important;
+            color: #8b949e !important;
             font-size: 0.85rem;
         }
     </style>
@@ -102,20 +119,22 @@
         <div class="container">
             <div class="d-flex align-items-center">
                 <i class="bi bi-activity me-2 text-primary"></i>
-                <span class="navbar-brand">System Status Monitor</span>
+                <span class="navbar-brand">Sistema de Monitorização DevOps</span>
             </div>
             <span class="text-muted-dark" id="last-update">--:--:--</span>
         </div>
     </nav>
 
     <div class="container">
+        <!-- Dashboard Grid -->
         <div class="row" id="services-container">
             <div class="col-12 text-center mt-5">
                 <div class="spinner-border text-primary" role="status"></div>
-                <p class="mt-2 text-muted-dark">Carregando telemetria...</p>
+                <p class="mt-2 text-muted-dark">A estabelecer ligação aos sensores...</p>
             </div>
         </div>
 
+        <!-- Área de Segurança -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card alert-panel">
@@ -127,7 +146,7 @@
                         <ul id="alert-list" class="list-unstyled m-0">
                             <li class="text-muted-dark">
                                 <i class="bi bi-check-circle me-2 text-success"></i>
-                                Nenhum incidente de segurança ativo.
+                                Monitorização ativa. Nenhuma violação detetada.
                             </li>
                         </ul>
                     </div>
@@ -137,33 +156,44 @@
     </div>
 
     <script>
-        // Mapeamento de ícones profissionais por serviço
         const iconMap = {
             'Web Server (Nginx)': 'bi-globe2',
             'Banco de Dados (Postgres)': 'bi-database',
             'Servidor SMTP (MailHog)': 'bi-envelope',
-            'Integridade de Arquivos': 'bi-file-earmark-lock'
+            'Integridade de Ficheiros': 'bi-file-earmark-lock'
         };
 
         async function atualizarDados() {
             try {
+                // Fetch para a API do Python
                 const response = await fetch('/api/monitorar');
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+
                 const data = await response.json();
                 
                 const container = document.getElementById('services-container');
                 container.innerHTML = ''; 
                 
                 data.forEach((servico) => {
-                    // Define estilos baseados no status
-                    const isOnline = servico.status_online;
-                    const statusClass = isOnline ? 'status-online' : 'status-offline';
-                    const statusText = isOnline ? 'OPERACIONAL' : 'FALHA CRÍTICA';
+                    let statusClass = 'status-online';
+                    let statusText = 'OPERACIONAL';
+                    let borderStyle = '';
                     
-                    // Escolhe o ícone certo ou usa um genérico
-                    const iconClass = iconMap[servico.servico] || 'bi-hdd-rack';
+                    // Lógica de Cores (Verde, Amarelo, Vermelho) baseada no 'nivel_alerta'
+                    if (servico.nivel_alerta === 'critico') {
+                        statusClass = 'status-offline';
+                        statusText = 'FALHA CRÍTICA';
+                        borderStyle = 'border-color: #ff6b6b !important; box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);';
+                    } else if (servico.nivel_alerta === 'atencao') {
+                        statusClass = 'status-warning';
+                        statusText = 'DEGRADAÇÃO';
+                        borderStyle = 'border-color: #ffc107 !important; box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);';
+                    }
 
-                    // Cor da borda do card muda se cair
-                    const borderStyle = isOnline ? '' : 'border-color: #ff6b6b !important;';
+                    const iconClass = iconMap[servico.servico] || 'bi-hdd-rack';
 
                     const html = `
                         <div class="col-md-3 col-sm-6 mb-4">
@@ -179,7 +209,7 @@
                                         <span class="metric-value">${servico.latencia_ms}</span>
                                         <span class="metric-unit">ms</span>
                                     </div>
-                                    <div class="mt-3 pt-3 border-top border-secondary">
+                                    <div class="mt-3 pt-3 border-top border-secondary border-opacity-25">
                                         <small class="text-muted-dark d-block text-truncate" title="${servico.detalhes}">
                                             ${servico.detalhes}
                                         </small>
@@ -192,10 +222,18 @@
                 });
 
                 const agora = new Date();
-                document.getElementById('last-update').innerText = 'UPDATED: ' + agora.toLocaleTimeString('pt-BR');
+                document.getElementById('last-update').innerText = 'ATUALIZADO: ' + agora.toLocaleTimeString('pt-PT');
 
             } catch (error) {
                 console.error('Erro:', error);
+                // Mostra erro amigável na tela se não conseguir conectar
+                document.getElementById('services-container').innerHTML = `
+                    <div class="col-12 text-center text-danger mt-5">
+                        <h3 class="display-6"><i class="bi bi-wifi-off"></i> Falha de Ligação</h3>
+                        <p>Não foi possível comunicar com o servidor.</p>
+                        <small class="text-muted">Verifique se o Docker está a correr e aceda via <b>http://localhost:5000</b></small>
+                    </div>
+                `;
             }
         }
 
