@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # 1. PROGRAMA PYTHON
   monitor-app:
     build: ./app
     container_name: meu-monitor
@@ -16,22 +15,21 @@ services:
       - TZ=America/Sao_Paulo    
       - PYTHONUNBUFFERED=1      
 
-  # 2. WEB (Nginx)
   web-alvo:
     image: nginx:alpine
     container_name: web-server-teste
     ports:
       - "8080:80"
 
-  # 3. BANCO DE DADOS (Postgres)
   db-alvo:
     image: postgres:13
     container_name: db-server-teste
     environment:
-      POSTGRES_PASSWORD: senha_secreta
-      POSTGRES_DB: banco_teste
+      # MUDAMOS AS CREDENCIAIS AQUI PARA FORÇAR O RESET
+      POSTGRES_USER: admin_db
+      POSTGRES_PASSWORD: senha_nova_123
+      POSTGRES_DB: monitor_db
 
-  # 4. SMTP (MailHog)
   smtp-alvo:
     image: mailhog/mailhog
     container_name: smtp-server-teste

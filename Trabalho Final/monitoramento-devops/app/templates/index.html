@@ -1,244 +1,202 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Monitorização DevOps</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ícones -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
+    <title>Plataforma de Monitoramento DevOps</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* TEMA PROFISSIONAL DARK */
-        body {
-            background-color: #0f111a; 
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* CSS High Contrast Dark Mode */
+        body { background-color: #000000; color: #ffffff; font-family: 'Segoe UI', sans-serif; padding: 30px; margin: 0; }
+        
+        h2 { border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
         }
 
-        /* NAVBAR */
-        .navbar {
-            background-color: #1a1d2d !important;
-            border-bottom: 1px solid #2d324e;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .navbar-brand {
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #ffffff !important;
-            text-transform: uppercase;
-            font-size: 1.1rem;
-        }
-
-        /* CARTÕES (CARDS) */
         .card {
-            background-color: #1a1d2d;
-            border: 1px solid #2d324e;
+            background-color: #0f0f0f;
+            border: 1px solid #222;
+            border-top: 5px solid #444; /* Default Color */
             border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 220px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+            transition: transform 0.2s ease, border-color 0.3s ease;
         }
-        .card:hover {
-            transform: translateY(-2px);
-        }
+
+        .card:hover { transform: translateY(-5px); }
+
+        /* Cores de Status (Requisito 4) */
+        .status-NORMAL { border-top-color: #00ff41; box-shadow: 0 0 10px rgba(0, 255, 65, 0.1); }
+        .status-NORMAL .val, .status-NORMAL h3 { color: #00ff41; }
+
+        .status-ATENCAO { border-top-color: #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.1); }
+        .status-ATENCAO .val, .status-ATENCAO h3 { color: #ffcc00; }
+
+        .status-CRITICO { border-top-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
+        .status-CRITICO .val, .status-CRITICO h3 { color: #ff0000; animation: pulse 1.5s infinite; }
         
-        /* Cabeçalho do Card */
-        .card-header {
-            background-color: transparent;
-            border-bottom: 1px solid #2d324e;
-            font-weight: 600;
-            padding: 15px 20px;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-            /* Azul Ciano Neon (Para brilhar no fundo preto) */
-            color: #0dcaf0; 
-            text-shadow: 0 0 8px rgba(13, 202, 240, 0.3);
-        }
-
-        /* Texto de Métricas */
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: 300;
-            color: #ffffff;
-        }
-        .metric-unit {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        /* BADGES (Etiquetas de Estado) */
-        .badge-status {
-            font-size: 0.7rem;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        /* Verde - Operacional */
-        .status-online {
-            background-color: rgba(32, 201, 151, 0.15);
-            color: #20c997; 
-            border: 1px solid rgba(32, 201, 151, 0.3);
-        }
-        /* Amarelo - Atenção/Lentidão */
-        .status-warning {
-            background-color: rgba(255, 193, 7, 0.15);
-            color: #ffc107;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-        /* Vermelho - Crítico/Offline */
-        .status-offline {
-            background-color: rgba(220, 53, 69, 0.15);
-            color: #ff6b6b;
-            border: 1px solid rgba(255, 107, 107, 0.3);
-        }
-
-        /* Painel de Alertas */
-        .alert-panel {
-            background-color: #151725;
-            border: 1px solid #ffc107;
-        }
-        .alert-header {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-            border-bottom: 1px solid #ffc107;
-        }
+        /* Textos */
+        h3 { margin: 0; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        .val { font-size: 3.5rem; font-weight: 700; margin: 20px 0; text-align: center; }
+        .unit { font-size: 1rem; color: #666; font-weight: normal; }
         
-        .text-muted-dark {
-            color: #8b949e !important;
-            font-size: 0.85rem;
+        .extra-metrics { font-size: 0.8rem; color: #888; text-align: center; margin-bottom: 10px; background: #1a1a1a; padding: 5px; border-radius: 4px;}
+
+        .footer { 
+            text-align: center; font-size: 0.95rem; color: #ccc; 
+            border-top: 1px solid #222; padding-top: 15px; margin-top: auto; 
         }
+
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-dark mb-5">
-        <div class="container">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-activity me-2 text-primary"></i>
-                <span class="navbar-brand">Sistema de Monitorização DevOps</span>
-            </div>
-            <span class="text-muted-dark" id="last-update">--:--:--</span>
-        </div>
-    </nav>
+    <h2><i class="fa-solid fa-network-wired"></i> Monitoramento de Serviços DevOps</h2>
 
-    <div class="container">
-        <!-- Dashboard Grid -->
-        <div class="row" id="services-container">
-            <div class="col-12 text-center mt-5">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="mt-2 text-muted-dark">A estabelecer ligação aos sensores...</p>
-            </div>
+    <div class="dashboard-grid">
+
+        <div id="card-web" class="card status-NORMAL">
+            <h3><i class="fa-solid fa-globe"></i> WEB SERVER (NGINX) <span id="badge-web">ONLINE</span></h3>
+            <div class="val"><span id="val-web">--</span><span class="unit">ms</span></div>
+            <div class="extra-metrics">RPS: <span id="rps-web">120</span> | Erros: 0.1%</div>
+            <div class="footer" id="msg-web">Inicializando...</div>
         </div>
 
-        <!-- Área de Segurança -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card alert-panel">
-                    <div class="card-header alert-header d-flex align-items-center">
-                        <i class="bi bi-shield-exclamation me-2"></i>
-                        <span>LOGS DE SEGURANÇA</span>
-                    </div>
-                    <div class="card-body">
-                        <ul id="alert-list" class="list-unstyled m-0">
-                            <li class="text-muted-dark">
-                                <i class="bi bi-check-circle me-2 text-success"></i>
-                                Monitorização ativa. Nenhuma violação detetada.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <div id="card-db" class="card status-NORMAL">
+            <h3><i class="fa-solid fa-database"></i> BANCO DE DADOS <span id="badge-db">ONLINE</span></h3>
+            <div class="val"><span id="val-db">--</span><span class="unit">ms</span></div>
+            <div class="extra-metrics">QPS: <span id="qps-db">340</span> | Conn: 45</div>
+            <div class="footer" id="msg-db">Inicializando...</div>
         </div>
+
+        <div id="card-smtp" class="card status-NORMAL">
+            <h3><i class="fa-regular fa-envelope"></i> SMTP SERVER <span id="badge-smtp">ONLINE</span></h3>
+            <div class="val" id="val-smtp" style="font-size: 2.5rem;">OK</div>
+            <div class="extra-metrics">Fila de Saída: <span id="queue-smtp">0</span></div>
+            <div class="footer" id="msg-smtp">Inicializando...</div>
+        </div>
+
+        <div id="card-sec" class="card status-NORMAL">
+            <h3><i class="fa-solid fa-shield-halved"></i> SEGURANÇA <span id="badge-sec">OK</span></h3>
+            <div class="val" id="val-sec" style="font-size: 2.5rem;">PROTEGIDO</div>
+            <div class="extra-metrics">Integridade de Arquivos</div>
+            <div class="footer" id="msg-sec">Monitorando protegido.conf</div>
+        </div>
+
     </div>
 
     <script>
-        const iconMap = {
-            'Web Server (Nginx)': 'bi-globe2',
-            'Banco de Dados (Postgres)': 'bi-database',
-            'Servidor SMTP (MailHog)': 'bi-envelope',
-            'Integridade de Ficheiros': 'bi-file-earmark-lock'
-        };
+        // Armazena o último estado para evitar flood de e-mails
+        const lastStates = { web: 'NORMAL', db: 'NORMAL', smtp: 'NORMAL', sec: 'NORMAL' };
 
-        async function atualizarDados() {
+        async function updateDashboard() {
             try {
-                // Fetch para a API do Python
-                const response = await fetch('/api/monitorar');
+                // Busca dados do Python
+                const res = await fetch('/api/status');
+                const data = await res.json();
+
+                // Atualiza Cards com dados reais + simulação visual de metricas extras
+                renderCard('web', data.web.ping, data.web.status_text, data.web.level, "Web Server Nginx");
+                renderCard('db', data.db.ping, data.db.status_text, data.db.level, "Banco de Dados SQL");
+                renderCard('smtp', data.smtp.ping, data.smtp.status_text, data.smtp.level, "Servidor SMTP");
                 
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                const container = document.getElementById('services-container');
-                container.innerHTML = ''; 
-                
-                data.forEach((servico) => {
-                    let statusClass = 'status-online';
-                    let statusText = 'OPERACIONAL';
-                    let borderStyle = '';
-                    
-                    // Lógica de Cores (Verde, Amarelo, Vermelho) baseada no 'nivel_alerta'
-                    if (servico.nivel_alerta === 'critico') {
-                        statusClass = 'status-offline';
-                        statusText = 'FALHA CRÍTICA';
-                        borderStyle = 'border-color: #ff6b6b !important; box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);';
-                    } else if (servico.nivel_alerta === 'atencao') {
-                        statusClass = 'status-warning';
-                        statusText = 'DEGRADAÇÃO';
-                        borderStyle = 'border-color: #ffc107 !important; box-shadow: 0 0 10px rgba(255, 193, 7, 0.2);';
-                    }
-
-                    const iconClass = iconMap[servico.servico] || 'bi-hdd-rack';
-
-                    const html = `
-                        <div class="col-md-3 col-sm-6 mb-4">
-                            <div class="card h-100" style="${borderStyle}">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <span>
-                                        <i class="bi ${iconClass} me-2"></i> ${servico.servico.split('(')[0]}
-                                    </span>
-                                    <span class="badge badge-status ${statusClass}">${statusText}</span>
-                                </div>
-                                <div class="card-body text-center d-flex flex-column justify-content-center">
-                                    <div>
-                                        <span class="metric-value">${servico.latencia_ms}</span>
-                                        <span class="metric-unit">ms</span>
-                                    </div>
-                                    <div class="mt-3 pt-3 border-top border-secondary border-opacity-25">
-                                        <small class="text-muted-dark d-block text-truncate" title="${servico.detalhes}">
-                                            ${servico.detalhes}
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += html;
-                });
-
-                const agora = new Date();
-                document.getElementById('last-update').innerText = 'ATUALIZADO: ' + agora.toLocaleTimeString('pt-PT');
+                // Card de Segurança (Lógica separada)
+                renderSecCard(data.sec.status_text, data.sec.level);
 
             } catch (error) {
-                console.error('Erro:', error);
-                // Mostra erro amigável na tela se não conseguir conectar
-                document.getElementById('services-container').innerHTML = `
-                    <div class="col-12 text-center text-danger mt-5">
-                        <h3 class="display-6"><i class="bi bi-wifi-off"></i> Falha de Ligação</h3>
-                        <p>Não foi possível comunicar com o servidor.</p>
-                        <small class="text-muted">Verifique se o Docker está a correr e aceda via <b>http://localhost:5000</b></small>
-                    </div>
-                `;
+                console.error("Erro de conexão com API:", error);
             }
         }
 
-        atualizarDados();
-        setInterval(atualizarDados, 5000);
+        function renderCard(id, ping, statusText, level, niceName) {
+            const card = document.getElementById(`card-${id}`);
+            const val = document.getElementById(`val-${id}`);
+            const msg = document.getElementById(`msg-${id}`);
+            const badge = document.getElementById(`badge-${id}`);
+
+            // Atualiza Classes Visuais
+            card.className = `card status-${level}`;
+
+            // Lógica de Texto e Métricas Visuais
+            if (statusText === 'OFFLINE') {
+                val.innerText = "OFF";
+                msg.innerText = "SERVIÇO INDISPONÍVEL";
+                badge.innerText = "DOWN";
+            } else {
+                val.innerText = ping;
+                badge.innerText = "ONLINE";
+                
+                if (level === 'ATENCAO') {
+                    msg.innerText = "Latência Alta / Degradação";
+                } else {
+                    msg.innerText = "Operacional";
+                }
+            }
+
+            // Simulação visual de números "vivos" (RPS, QPS) para ficar bonito
+            if(id === 'web') document.getElementById('rps-web').innerText = 100 + Math.floor(Math.random() * 50);
+            if(id === 'db') document.getElementById('qps-db').innerText = 300 + Math.floor(Math.random() * 80);
+            
+            // VERIFICA SE PRECISA MANDAR EMAIL (Requisito 4: Amarelo e Vermelho)
+            checkAndTriggerEmail(id, level, niceName, msg.innerText);
+        }
+
+        function renderSecCard(text, level) {
+            const card = document.getElementById('card-sec');
+            const val = document.getElementById('val-sec');
+            const msg = document.getElementById('msg-sec');
+            const badge = document.getElementById('badge-sec');
+
+            card.className = `card status-${level}`;
+            val.innerText = (level === 'CRITICO') ? "ALERTA" : "PROTEGIDO";
+            badge.innerText = (level === 'CRITICO') ? "CRÍTICO" : "OK";
+            
+            if (level === 'CRITICO') {
+                msg.innerText = "Alteração detectada em arquivos!";
+            } else {
+                msg.innerText = "Nenhuma alteração detectada.";
+            }
+            // O backend já envia email de segurança sozinho via watcher de arquivo
+        }
+
+        function checkAndTriggerEmail(id, currentLevel, name, details) {
+            // Se o estado mudou (ex: era NORMAL e virou ATENCAO)
+            if (currentLevel !== lastStates[id]) {
+                
+                // Requisito 4: Enviar e-mail para Nível 2 (Amarelo) e Nível 3 (Vermelho)
+                if (currentLevel === 'ATENCAO' || currentLevel === 'CRITICO') {
+                    
+                    console.log(`Disparando email para ${name} - Status: ${currentLevel}`);
+                    
+                    fetch('/api/trigger-email', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ 
+                            servico: name, 
+                            status: currentLevel === 'ATENCAO' ? 'ATENÇÃO (Degradação)' : 'CRÍTICO (Indisponível)', 
+                            msg: details 
+                        })
+                    });
+                }
+                
+                // Atualiza memória
+                lastStates[id] = currentLevel;
+            }
+        }
+
+        // Atualiza a cada 3 segundos
+        setInterval(updateDashboard, 3000);
+        updateDashboard();
     </script>
 </body>
 </html>

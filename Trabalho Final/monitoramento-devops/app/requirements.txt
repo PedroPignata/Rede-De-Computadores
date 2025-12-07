@@ -1,7 +1,5 @@
 flask
 requests
+psycopg2-binary
 psutil
 apscheduler
-sqlalchemy
-ping3
-psycopg2-binary

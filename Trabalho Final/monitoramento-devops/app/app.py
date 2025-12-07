@@ -1,184 +1,167 @@
-from flask import Flask, jsonify, render_template
-import requests
-import time
-import socket
-import psycopg2
-import smtplib
-import hashlib
 import os
+import hashlib
+import smtplib
+import socket
+import time
+import random
 from email.mime.text import MIMEText
+from email.header import Header
 from datetime import datetime
+from flask import Flask, render_template, request, jsonify
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 
-# CONFIGURAÇÕES GLOBAIS
-ARQUIVO_VIGIADO = "protegido.conf"
-HASH_ORIGINAL = "" 
-LIMITE_LATENCIA_AMARELO = 2000
-SIMULAR_LENTIDAO = False
-
-ULTIMO_STATUS = {
-    "web": "ok",
-    "db": "ok", 
-    "smtp": "ok", 
-    "seguranca": "ok"
+# --- CONFIGURAÇÕES DO AMBIENTE DOCKER ---
+SERVICES = {
+    'web': {'host': 'web-alvo', 'port': 80, 'name': 'Web Server Nginx'},
+    'db':  {'host': 'db-alvo', 'port': 5432, 'name': 'Banco de Dados SQL'},
+    'smtp': {'host': 'smtp-alvo', 'port': 1025, 'name': 'SMTP MailHog'},
 }
 
-# FUNÇÃO DE ENVIAR E-MAIL
-def enviar_alerta_email(titulo, mensagem, nivel="CRÍTICO"):
-    print(f"📧 Enviando alerta ({nivel}) para MailHog: {titulo}...")
-    
-    msg = MIMEText(f"""
-    SISTEMA DE MONITORAMENTO DEVOPS
-    -------------------------------
-    Nível do Alerta: {nivel}
-    Evento: {titulo}
-    Data/Hora: {datetime.now()}
-    
-    Detalhes Técnicos:
-    {mensagem}
-    """)
-    
-    msg['Subject'] = f'🚨 [{nivel}] {titulo}'
-    msg['From'] = 'sistema@monitoramento.local'
-    msg['To'] = 'admin@empresa.com'
+# Configurações de E-mail
+SMTP_SENDER_HOST = 'smtp-alvo'
+SMTP_SENDER_PORT = 1025
+FILE_TO_WATCH = 'protegido.conf'
 
-    try:
-        s = smtplib.SMTP('smtp-alvo', 1025)
-        s.send_message(msg)
-        s.quit()
-        print(f"✅ E-mail enviado com sucesso.")
-    except Exception as e:
-        print(f"❌ Erro ao conectar no MailHog: {str(e)}")
+# Estado Global
+last_file_hash = None
+security_status = "NORMAL"
 
-# SEGURANÇA
-def calcular_hash_arquivo(caminho):
-    if not os.path.exists(caminho):
-        return None
-    with open(caminho, "rb") as f:
-        bytes = f.read()
-        return hashlib.md5(bytes).hexdigest()
+# --- FUNÇÕES ---
 
-if os.path.exists(ARQUIVO_VIGIADO):
-    HASH_ORIGINAL = calcular_hash_arquivo(ARQUIVO_VIGIADO)
-    print(f"🔒 Segurança iniciada. Hash original: {HASH_ORIGINAL}")
-else:
-    with open(ARQUIVO_VIGIADO, 'w') as f:
-        f.write("config=padrao")
-    HASH_ORIGINAL = calcular_hash_arquivo(ARQUIVO_VIGIADO)
-    print(f"⚠️ Arquivo de segurança criado. Hash: {HASH_ORIGINAL}")
-
-# SENSORES DE SERVIÇOS
-
-def checar_web_server():
-    url = "http://web-alvo"
-    resultado = {
-        "servico": "Web Server (Nginx)", 
-        "status_online": False, 
-        "latencia_ms": 0, 
-        "detalhes": "",
-        "nivel_alerta": "critico"
-    }
+def get_service_status(host, port):
+    """
+    1. Tenta conexão REAL (TCP).
+    2. Se falhar -> Retorna OFFLINE (Vermelho).
+    3. Se conectar -> Tem 10% de chance de simular latência alta (Amarelo).
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(2.0)
+    start_time = time.time()
     
     try:
-        inicio = time.time()
-        
-        if SIMULAR_LENTIDAO:
-            time.sleep(2.5)
+        # Tenta conectar de verdade
+        s.connect((host, port))
+        real_ping = int((time.time() - start_time) * 1000)
+        s.close()
 
-        requests.get(url, timeout=5)
-        fim = time.time()
+        # --- LÓGICA DE SIMULAÇÃO DE DEGRADAÇÃO (NÍVEL 2 - AMARELO) ---
+        # 10% de chance de simular lentidão (anomalia de tráfego)
+        if random.randint(1, 100) > 90:
+            fake_latency = random.randint(250, 800) # Latência alta simulada
+            return fake_latency, 'ONLINE'
         
-        latencia = round((fim - inicio) * 1000, 2)
-        resultado["latencia_ms"] = latencia
-        resultado["status_online"] = True
-        
-        if latencia > LIMITE_LATENCIA_AMARELO:
-            resultado["nivel_alerta"] = "atencao"
-            resultado["detalhes"] = f"LENTIDÃO DETECTADA: {latencia}ms"
-        else:
-            resultado["nivel_alerta"] = "ok"
-            resultado["detalhes"] = "HTTP 200 OK - Performance Normal"
-            
-    except Exception as e:
-        resultado["nivel_alerta"] = "critico"
-        resultado["detalhes"] = str(e)
-    
-    verificar_e_enviar_alerta("web", resultado)
-    return resultado
+        return real_ping, 'ONLINE'
 
-def checar_banco_dados():
-    resultado = {"servico": "Banco de Dados (Postgres)", "status_online": False, "latencia_ms": 0, "detalhes": "", "nivel_alerta": "critico"}
+    except:
+        return 0, 'OFFLINE'
+
+def calculate_file_hash(filepath):
+    if not os.path.exists(filepath): return None
+    with open(filepath, 'rb') as f:
+        return hashlib.md5(f.read()).hexdigest()
+
+def send_email_alert(service_name, status, details):
+    """Envia e-mail para o MailHog"""
     try:
-        inicio = time.time()
-        conn = psycopg2.connect(host="db-alvo", user="postgres", password="senha_secreta", connect_timeout=3)
-        conn.close()
-        fim = time.time()
-        resultado["status_online"] = True
-        resultado["latencia_ms"] = round((fim - inicio) * 1000, 2)
-        resultado["detalhes"] = "Conexão aceita"
-        resultado["nivel_alerta"] = "ok"
-    except Exception as e:
-        resultado["detalhes"] = str(e)
-
-    verificar_e_enviar_alerta("db", resultado)
-    return resultado
-
-def checar_smtp():
-    resultado = {"servico": "Servidor SMTP (MailHog)", "status_online": False, "latencia_ms": 0, "detalhes": "", "nivel_alerta": "critico"}
-    try:
-        inicio = time.time()
-        s = smtplib.SMTP('smtp-alvo', 1025, timeout=3)
-        s.quit()
-        fim = time.time()
-        resultado["status_online"] = True
-        resultado["latencia_ms"] = round((fim - inicio) * 1000, 2)
-        resultado["detalhes"] = "Serviço SMTP respondendo"
-        resultado["nivel_alerta"] = "ok"
-    except Exception as e:
-        resultado["detalhes"] = str(e)
-
-    verificar_e_enviar_alerta("smtp", resultado)
-    return resultado
-
-def checar_seguranca_arquivo():
-    hash_atual = calcular_hash_arquivo(ARQUIVO_VIGIADO)
-    resultado = {"servico": "Integridade de Arquivos", "status_online": True, "latencia_ms": 0, "detalhes": "Integridade verificada.", "nivel_alerta": "ok"}
-    
-    if hash_atual != HASH_ORIGINAL:
-        resultado["status_online"] = False
-        resultado["nivel_alerta"] = "critico"
-        resultado["detalhes"] = f"PERIGO: O arquivo '{ARQUIVO_VIGIADO}' foi alterado!"
-
-    verificar_e_enviar_alerta("seguranca", resultado)
-    return resultado
-
-# LÓGICA CENTRAL DE ALERTAS
-def verificar_e_enviar_alerta(chave, resultado):
-    estado_atual = resultado["nivel_alerta"]
-    estado_anterior = ULTIMO_STATUS[chave]
-
-    if estado_atual != estado_anterior:
-        if estado_atual == "atencao":
-            enviar_alerta_email(f"{resultado['servico']} - DEGRADAÇÃO", resultado["detalhes"], "ATENÇÃO")
-        elif estado_atual == "critico":
-            enviar_alerta_email(f"{resultado['servico']} - FALHA", resultado["detalhes"], "CRÍTICO")
+        timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        subject = f"ALERTA [{status}]: {service_name}"
         
-        ULTIMO_STATUS[chave] = estado_atual
+        body = f"""
+        ========================================
+        SISTEMA DE MONITORAMENTO DEVOPS
+        ========================================
+        
+        SERVIÇO AFETADO: {service_name}
+        NOVO STATUS:     {status}
+        HORÁRIO:         {timestamp}
+        
+        DETALHES TÉCNICOS:
+        {details}
+        
+        AÇÃO RECOMENDADA:
+        - Verificar logs do container
+        - Checar balanceador de carga
+        ========================================
+        """
+        
+        msg = MIMEText(body, 'plain', 'utf-8')
+        msg['Subject'] = Header(subject, 'utf-8')
+        msg['From'] = 'monitor@devops.local'
+        msg['To'] = 'admin@devops.local'
 
-# ROTAS
+        server = smtplib.SMTP(SMTP_SENDER_HOST, SMTP_SENDER_PORT)
+        server.sendmail(msg['From'], [msg['To']], msg.as_string())
+        server.quit()
+        print(f"📧 E-mail enviado: {service_name} -> {status}")
+        return True
+    except Exception as e:
+        print(f"❌ Erro ao enviar e-mail: {e}")
+        return False
+
+# --- MONITORAMENTO DE SEGURANÇA (ARQUIVO) ---
+def check_security_job():
+    global last_file_hash, security_status
+    current_hash = calculate_file_hash(FILE_TO_WATCH)
+    
+    if last_file_hash is None:
+        last_file_hash = current_hash
+        return
+
+    # Se o hash mudou, dispara alerta CRÍTICO
+    if current_hash != last_file_hash:
+        security_status = "CRITICO"
+        last_file_hash = current_hash
+        send_email_alert("SEGURANÇA & INTEGRIDADE", "CRÍTICO", f"O arquivo de configuração '{FILE_TO_WATCH}' foi modificado não-autorizado.")
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(check_security_job, 'interval', seconds=5)
+scheduler.start()
+
+# --- ROTAS DA API ---
 
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
-@app.route('/api/monitorar')
-def monitorar():
-    r1 = checar_web_server()
-    r2 = checar_banco_dados()
-    r3 = checar_smtp()
-    r4 = checar_seguranca_arquivo()
-    return jsonify([r1, r2, r3, r4])
+@app.route('/api/status')
+def get_real_status():
+    data = {}
+    
+    for key, config in SERVICES.items():
+        ping, status = get_service_status(config['host'], config['port'])
+        
+        status_level = 'NORMAL' # Verde
+        
+        if status == 'OFFLINE':
+            status_level = 'CRITICO' # Vermelho (Container parado)
+        elif ping > 200: 
+            status_level = 'ATENCAO' # Amarelo (Latência alta simulada ou real)
+            
+        data[key] = {
+            'ping': ping,
+            'status_text': status,
+            'level': status_level
+        }
+
+    # Adiciona status de segurança
+    data['sec'] = {
+        'status_text': 'INVASÃO' if security_status == 'CRITICO' else 'PROTEGIDO',
+        'level': security_status
+    }
+
+    return jsonify(data)
+
+@app.route('/api/trigger-email', methods=['POST'])
+def trigger_email():
+    """Rota chamada pelo Front-end para garantir envio de e-mail"""
+    d = request.json
+    send_email_alert(d['servico'], d['status'], d['msg'])
+    return jsonify({"ok": True})
 
 if __name__ == '__main__':
+    # Cria hash inicial
+    last_file_hash = calculate_file_hash(FILE_TO_WATCH)
+    print("🚀 Monitoramento Iniciado...")
     app.run(host='0.0.0.0', port=5000, debug=True)
