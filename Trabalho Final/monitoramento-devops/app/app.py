@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 
-# CONFIGURAÇÕES DO AMBIENTE DOCKER 
+# CONFIGURAÇÕES DO AMBIENTE DOCKER - Um dicionario que cada linmha representa um serviço, um card do dashboard
 SERVICES = {
     'web': {'host': 'web-alvo', 'port': 80, 'name': 'Web Server Nginx'},
     'db':  {'host': 'db-alvo', 'port': 5432, 'name': 'Banco de Dados SQL'},
@@ -92,7 +92,7 @@ def send_email_alert(service_name, status, details):
         print(f"❌ Erro ao enviar e-mail: {e}")
         return False
 
-# MONITORAMENTO DE SEGURANÇA
+# MONITORAMENTO DE SEGURANÇA roda a cada 5 segundos para verificar a integridade do arquivo
 def check_security_job():
     global last_file_hash, security_status
     current_hash = calculate_file_hash(FILE_TO_WATCH)
