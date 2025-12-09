@@ -1,0 +1,836 @@
+[
+  {
+    "timestamp": "2025-12-09 09:26:52",
+    "service": "Servidor SMTP",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:26:55",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:27:13",
+    "service": "Banco de Dados SQL",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:27:22",
+    "service": "Servidor SMTP",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:27:28",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:27:43",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:27:58",
+    "service": "Servidor SMTP",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:28:04",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:28:44",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:28:56",
+    "service": "Servidor SMTP",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:02",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:08",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:08",
+    "service": "Banco de Dados SQL",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:17",
+    "service": "Servidor SMTP",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:20",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:26",
+    "service": "Banco de Dados SQL",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:29",
+    "service": "Servidor SMTP",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:38",
+    "service": "Banco de Dados SQL",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:29:41",
+    "service": "Servidor SMTP",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:30:02",
+    "service": "Web Server Nginx",
+    "level": "ATENÇÃO (Degradação)",
+    "details": "Latência Alta / Degradação"
+  },
+  {
+    "timestamp": "2025-12-09 09:30:15",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:30:49",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:30:55",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:31:13",
+    "service": "Banco de Dados SQL",
+    "level": "CRITICO",
+    "details": "SERVIÇO INDISPONÍVEL"
+  },
+  {
+    "timestamp": "2025-12-09 09:31:13",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:31:16",
+    "service": "SMTP Server",
+    "level": "CRITICO (EMAIL_FAIL)",
+    "details": "SERVIÇO INDISPONÍVEL | erro: [Errno -3] Temporary failure in name resolution"
+  },
+  {
+    "timestamp": "2025-12-09 09:31:22",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO (EMAIL_FAIL)",
+    "details": "Latência Alta | erro: [Errno -3] Temporary failure in name resolution"
+  },
+  {
+    "timestamp": "2025-12-09 09:31:43",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:31:49",
+    "service": "Web Server Nginx",
+    "level": "CRITICO",
+    "details": "SERVIÇO INDISPONÍVEL"
+  },
+  {
+    "timestamp": "2025-12-09 09:32:16",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:32:25",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:32:28",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:32:35",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:32:41",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:32:41",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:32:44",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:08",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:11",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:24",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:34",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:46",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:49",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:52",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:33:58",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:01",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:14",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:17",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:23",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:35",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:38",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:44",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:47",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:53",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:34:56",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:08",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:08",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:17",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:17",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:23",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:23",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:32",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:35",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:38",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:59",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:35:59",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:11",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:17",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:17",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:26",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:26",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:32",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:35",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:44",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:47",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:36:59",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:02",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:20",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:20",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:27",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:33",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:42",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:48",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:37:54",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:00",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:03",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:12",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:24",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:30",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:36",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:45",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:38:48",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:00",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:09",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:15",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:18",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:28",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:31",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:37",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:37",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:43",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:49",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:55",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:39:55",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:40:01",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:40:31",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:40:40",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:40:43",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:40:46",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:40:55",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:01",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:04",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:16",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:19",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:26",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:32",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:35",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:35",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:47",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:50",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:41:56",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:42:02",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:42:02",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:42:08",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:42:08",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:42:20",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:42:50",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:06",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:09",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:09",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:12",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:24",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:39",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:45",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:55",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:55",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:06",
+    "service": "Web Server Nginx",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:18",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:22",
+    "service": "SMTP Server",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:37",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
+  }
+]

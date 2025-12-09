@@ -1,0 +1,177 @@
+[
+  {
+    "timestamp": "2025-12-09 09:43:48",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:51",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:54",
+    "web": "ATENCAO",
+    "db": "NORMAL",
+    "smtp": "ATENCAO",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:43:57",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "ATENCAO",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:00",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:03",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:06",
+    "web": "ATENCAO",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:09",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:12",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:15",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:18",
+    "web": "NORMAL",
+    "db": "ATENCAO",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:22",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "ATENCAO",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:25",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "ATENCAO",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:28",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:31",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:34",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:37",
+    "web": "NORMAL",
+    "db": "ATENCAO",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:40",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:43",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:46",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:49",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:53",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:56",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:44:59",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:45:02",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  }
+]

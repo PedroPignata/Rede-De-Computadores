@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Monitoramento DevOps</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        /* CSS High Contrast Dark Mode */
-        body { background-color: #000000; color: #ffffff; font-family: 'Segoe UI', sans-serif; padding: 30px; margin: 0; }
-        
-        h2 { border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+        body { background-color: #000; color: #fff; font-family: 'Segoe UI', sans-serif; padding: 30px; margin: 0; }
+
+        h2 { border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 30px; text-transform: uppercase; }
 
         .dashboard-grid {
             display: grid;
@@ -20,183 +22,355 @@
         .card {
             background-color: #0f0f0f;
             border: 1px solid #222;
-            border-top: 5px solid #444; 
+            border-top: 5px solid #444;
             border-radius: 8px;
             padding: 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
             min-height: 220px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.7);
-            transition: transform 0.2s ease, border-color 0.3s ease;
+            transition: transform .2s ease;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
         }
 
         .card:hover { transform: translateY(-5px); }
 
-        /* Cores de Status (Requisito 4) */
-        .status-NORMAL { border-top-color: #00ff41; box-shadow: 0 0 10px rgba(0, 255, 65, 0.1); }
-        .status-NORMAL .val, .status-NORMAL h3 { color: #00ff41; }
+        .status-NORMAL { border-top-color: #00ff41; }
+        .status-ATENCAO { border-top-color: #ffcc00; }
+        .status-CRITICO { border-top-color: #ff0000; animation: pulse 1.5s infinite; }
 
-        .status-ATENCAO { border-top-color: #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.1); }
-        .status-ATENCAO .val, .status-ATENCAO h3 { color: #ffcc00; }
+        @keyframes pulse { 50% { opacity: .6; } }
 
-        .status-CRITICO { border-top-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
-        .status-CRITICO .val, .status-CRITICO h3 { color: #ff0000; animation: pulse 1.5s infinite; }
-        
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        .val { font-size: 3.5rem; font-weight: 700; text-align: center; }
 
-        /* Textos */
-        h3 { margin: 0; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
-        .val { font-size: 3.5rem; font-weight: 700; margin: 20px 0; text-align: center; }
-        .unit { font-size: 1rem; color: #666; font-weight: normal; }
-        
-        .extra-metrics { font-size: 0.8rem; color: #888; text-align: center; margin-bottom: 10px; background: #1a1a1a; padding: 5px; border-radius: 4px;}
+        .extra-metrics { font-size: .8rem; background: #1a1a1a; padding: 5px; border-radius: 4px; text-align: center; }
 
-        .footer { 
-            text-align: center; font-size: 0.95rem; color: #ccc; 
-            border-top: 1px solid #222; padding-top: 15px; margin-top: auto; 
+        .footer {
+            text-align:center;
+            font-size:0.95rem;
+            color:#ccc;
+            border-top:1px solid #222;
+            padding-top:10px;
+            margin-top:12px;
         }
 
+        /* Alertas CSS */
+        .alert-item { border-bottom: 1px solid #222; padding: 8px 0; }
+        .alert-ts { color:#888; font-size:.9rem; margin-right:8px; display:inline-block; width:170px; }
+        .alert-service { font-weight:bold; }
+        .badge-level { padding:2px 6px; border-radius:5px; font-size:.8rem; margin-left:8px; }
+        .badge-CRITICO { background:rgba(255,0,0,.12); color:#ff6b6b; border:1px solid rgba(255,0,0,.2); }
+        .badge-ATENCAO { background:rgba(255,204,0,.08); color:#ffd400; border:1px solid rgba(255,204,0,.12); }
+        .badge-NORMAL { background:rgba(0,255,65,.04); color:#00ff41; border:1px solid rgba(0,255,65,.08); }
+
+        .secure-pct { font-size:0.9rem; color:#bbb; text-align:center; margin-top:6px; }
     </style>
 </head>
+
 <body>
 
     <h2><i class="fa-solid fa-network-wired"></i> Monitoramento de Serviços DevOps</h2>
 
+    <!-- DASHBOARD -->
     <div class="dashboard-grid">
 
         <div id="card-web" class="card status-NORMAL">
-            <h3><i class="fa-solid fa-globe"></i> WEB SERVER (NGINX) <span id="badge-web">ONLINE</span></h3>
-            <div class="val"><span id="val-web">--</span><span class="unit">ms</span></div>
-            <div class="extra-metrics">RPS: <span id="rps-web">120</span> | Erros: 0.1%</div>
-            <div class="footer" id="msg-web">Inicializando...</div>
+            <div>
+                <h3><i class="fa-solid fa-globe"></i> WEB SERVER (NGINX) <span id="badge-web">ONLINE</span></h3>
+                <div class="val"><span id="val-web">--</span> <span style="font-size:0.9rem">ms</span></div>
+                <div class="extra-metrics">RPS: <span id="rps-web">120</span> | Erros: 0.1%</div>
+            </div>
+            <div>
+                <div class="secure-pct" id="pct-web">Seguro: --%</div>
+                <div class="footer" id="msg-web">Inicializando...</div>
+            </div>
         </div>
 
         <div id="card-db" class="card status-NORMAL">
-            <h3><i class="fa-solid fa-database"></i> BANCO DE DADOS <span id="badge-db">ONLINE</span></h3>
-            <div class="val"><span id="val-db">--</span><span class="unit">ms</span></div>
-            <div class="extra-metrics">QPS: <span id="qps-db">340</span> | Conn: 45</div>
-            <div class="footer" id="msg-db">Inicializando...</div>
+            <div>
+                <h3><i class="fa-solid fa-database"></i> BANCO DE DADOS <span id="badge-db">ONLINE</span></h3>
+                <div class="val"><span id="val-db">--</span> <span style="font-size:0.9rem">ms</span></div>
+                <div class="extra-metrics">QPS: <span id="qps-db">340</span> | Conn: 45</div>
+            </div>
+            <div>
+                <div class="secure-pct" id="pct-db">Seguro: --%</div>
+                <div class="footer" id="msg-db">Inicializando...</div>
+            </div>
         </div>
 
         <div id="card-smtp" class="card status-NORMAL">
-            <h3><i class="fa-regular fa-envelope"></i> SMTP SERVER <span id="badge-smtp">ONLINE</span></h3>
-            <div class="val" id="val-smtp" style="font-size: 2.5rem;">OK</div>
-            <div class="extra-metrics">Fila de Saída: <span id="queue-smtp">0</span></div>
-            <div class="footer" id="msg-smtp">Inicializando...</div>
+            <div>
+                <h3><i class="fa-regular fa-envelope"></i> SMTP SERVER <span id="badge-smtp">ONLINE</span></h3>
+                <div class="val" id="val-smtp" style="font-size:2.5rem;">OK</div>
+                <div class="extra-metrics">Fila de Saída: <span id="queue-smtp">0</span></div>
+            </div>
+            <div>
+                <div class="secure-pct" id="pct-smtp">Seguro: --%</div>
+                <div class="footer" id="msg-smtp">Inicializando...</div>
+            </div>
         </div>
 
         <div id="card-sec" class="card status-NORMAL">
-            <h3><i class="fa-solid fa-shield-halved"></i> SEGURANÇA <span id="badge-sec">OK</span></h3>
-            <div class="val" id="val-sec" style="font-size: 2.5rem;">PROTEGIDO</div>
-            <div class="extra-metrics">Integridade de Arquivos</div>
-            <div class="footer" id="msg-sec">Monitorando protegido.conf</div>
+            <div>
+                <h3><i class="fa-solid fa-shield-halved"></i> SEGURANÇA <span id="badge-sec">OK</span></h3>
+                <div class="val" id="val-sec" style="font-size:2.5rem;">PROTEGIDO</div>
+                <div class="extra-metrics">Integridade de Arquivos</div>
+            </div>
+            <div>
+                <div class="secure-pct" id="pct-sec">Seguro: --%</div>
+                <div class="footer" id="msg-sec">Monitorando protegido.conf</div>
+            </div>
         </div>
 
     </div>
 
+    <!-- ALERTAS -->
+    <hr style="margin:40px 0;border-color:#222;">
+    <h2><i class="fa-solid fa-triangle-exclamation"></i> Alertas & Histórico</h2>
+
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+        <!-- LISTA -->
+        <div style="flex:1; min-width:340px; background:#0f0f0f; border:1px solid #222; border-radius:8px; padding:20px;">
+            <h3>Últimos Alertas
+                <button id="btn-clear-alerts" style="float:right; padding:6px 10px;">Limpar</button>
+            </h3>
+            <div id="alerts-list" style="max-height:420px; overflow:auto; margin-top:10px;"></div>
+        </div>
+
+        <!-- GRÁFICO -->
+        <div style="flex:1; min-width:340px; background:#0f0f0f; border:1px solid #222; border-radius:8px; padding:20px;">
+            <h3>Gráfico de Alertas (últimos 25)</h3>
+            <canvas id="chart-alerts" height="350"></canvas>
+        </div>
+
+    </div>
+
+
+    <!-- SCRIPT PRINCIPAL -->
     <script>
-        // Armazena o último estado para evitar flood de e-mails
-        const lastStates = { web: 'NORMAL', db: 'NORMAL', smtp: 'NORMAL', sec: 'NORMAL' };
+        const lastStates = { web:'NORMAL', db:'NORMAL', smtp:'NORMAL', sec:'NORMAL' };
+        const ALERTS_SHOW = 25; // mostrar últimos 25 no gráfico
 
         async function updateDashboard() {
             try {
-                // Busca dados do Python
                 const res = await fetch('/api/status');
                 const data = await res.json();
 
-                // Atualiza Cards com dados reais + simulação visual de metricas extras
-                renderCard('web', data.web.ping, data.web.status_text, data.web.level, "Web Server Nginx");
-                renderCard('db', data.db.ping, data.db.status_text, data.db.level, "Banco de Dados SQL");
-                renderCard('smtp', data.smtp.ping, data.smtp.status_text, data.smtp.level, "Servidor SMTP");
-                
-                // Card de Segurança (Lógica separada)
-                renderSecCard(data.sec.status_text, data.sec.level);
+                renderCard('web', data.web.ping, data.web.status_text, data.web.level, "Web Server Nginx", data.web.secure_pct);
+                renderCard('db', data.db.ping, data.db.status_text, data.db.level, "Banco de Dados SQL", data.db.secure_pct);
+                renderCard('smtp', data.smtp.ping, data.smtp.status_text, data.smtp.level, "SMTP Server", data.smtp.secure_pct);
+                renderSecCard(data.sec.status_text, data.sec.level, data.sec.secure_pct);
 
-            } catch (error) {
-                console.error("Erro de conexão com API:", error);
+            } catch (err) {
+                console.error("Erro API:", err);
             }
         }
 
-        function renderCard(id, ping, statusText, level, niceName) {
+        function renderCard(id, ping, statusText, level, name, secure_pct) {
             const card = document.getElementById(`card-${id}`);
             const val = document.getElementById(`val-${id}`);
             const msg = document.getElementById(`msg-${id}`);
             const badge = document.getElementById(`badge-${id}`);
+            const pct = document.getElementById(`pct-${id}`);
 
-            // Atualiza Classes Visuais
             card.className = `card status-${level}`;
+            pct.innerText = `Seguro: ${secure_pct}%`;
 
-            // Lógica de Texto e Métricas Visuais
             if (statusText === 'OFFLINE') {
                 val.innerText = "OFF";
                 msg.innerText = "SERVIÇO INDISPONÍVEL";
                 badge.innerText = "DOWN";
             } else {
                 val.innerText = ping;
+                msg.innerText = level === 'ATENCAO' ? "Latência Alta" : "Operacional";
                 badge.innerText = "ONLINE";
-                
-                if (level === 'ATENCAO') {
-                    msg.innerText = "Latência Alta / Degradação";
-                } else {
-                    msg.innerText = "Operacional";
-                }
             }
 
-            // Simulação visual de números "vivos" (RPS, QPS) para ficar bonito
-            if(id === 'web') document.getElementById('rps-web').innerText = 100 + Math.floor(Math.random() * 50);
-            if(id === 'db') document.getElementById('qps-db').innerText = 300 + Math.floor(Math.random() * 80);
-            
-            // VERIFICA SE PRECISA MANDAR EMAIL (Requisito 4: Amarelo e Vermelho)
-            checkAndTriggerEmail(id, level, niceName, msg.innerText);
+            if (id === 'web') document.getElementById('rps-web').innerText = 100 + Math.floor(Math.random()*60);
+            if (id === 'db') document.getElementById('qps-db').innerText = 300 + Math.floor(Math.random()*50);
+
+            // Verificar alertas - front-end não manda email rapidamente, server tem rate-limit também
+            checkAlert(id, level, name, msg.innerText);
         }
 
-        function renderSecCard(text, level) {
+        function renderSecCard(text, level, secure_pct) {
             const card = document.getElementById('card-sec');
             const val = document.getElementById('val-sec');
             const msg = document.getElementById('msg-sec');
             const badge = document.getElementById('badge-sec');
+            const pct = document.getElementById('pct-sec');
 
             card.className = `card status-${level}`;
-            val.innerText = (level === 'CRITICO') ? "ALERTA" : "PROTEGIDO";
-            badge.innerText = (level === 'CRITICO') ? "CRÍTICO" : "OK";
-            
-            if (level === 'CRITICO') {
-                msg.innerText = "Alteração detectada em arquivos!";
-            } else {
-                msg.innerText = "Nenhuma alteração detectada.";
-            }
-            // O backend já envia email de segurança sozinho via watcher de arquivo
+            val.innerText = level === 'CRITICO' ? "ALERTA" : "PROTEGIDO";
+            badge.innerText = level === 'CRITICO' ? "CRÍTICO" : "OK";
+            msg.innerText = level === 'CRITICO' ? "Alteração detectada!" : "Nenhuma alteração.";
+            pct.innerText = `Seguro: ${secure_pct}%`;
         }
 
-        function checkAndTriggerEmail(id, currentLevel, name, details) {
-            // Se o estado mudou (ex: era NORMAL e virou ATENCAO)
-            if (currentLevel !== lastStates[id]) {
-                
-                // Requisito 4: Enviar e-mail para Nível 2 (Amarelo) e Nível 3 (Vermelho)
-                if (currentLevel === 'ATENCAO' || currentLevel === 'CRITICO') {
-                    
-                    console.log(`Disparando email para ${name} - Status: ${currentLevel}`);
-                    
-                    fetch('/api/trigger-email', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ 
-                            servico: name, 
-                            status: currentLevel === 'ATENCAO' ? 'ATENÇÃO (Degradação)' : 'CRÍTICO (Indisponível)', 
-                            msg: details 
+        function checkAlert(id, level, serviceName, detail) {
+            if (lastStates[id] !== level) {
+                // chama trigger (backend aplica rate-limit de 10s)
+                if (level === 'ATENCAO' || level === 'CRITICO') {
+                    fetch("/api/trigger-email", {
+                        method:"POST",
+                        headers:{"Content-Type":"application/json"},
+                        body:JSON.stringify({
+                            servico:serviceName,
+                            status:level,
+                            msg:detail
                         })
-                    });
+                    }).catch(e => console.error("Erro trigger-email:", e));
                 }
-                
-                // Atualiza memória
-                lastStates[id] = currentLevel;
+                lastStates[id] = level;
             }
         }
 
-        // Atualiza a cada 3 segundos
-        setInterval(updateDashboard, 3000);
+        //--------------------------------------------------------------
+        // ALERTAS (LIST + CHART)
+        //--------------------------------------------------------------
+        let alertsChart = null;
+
+        async function loadAlerts() {
+            try {
+                const res = await fetch('/api/alerts');
+                const payload = await res.json();
+                let alerts = payload.alerts || [];
+
+                // pegar últimos ALERTS_SHOW
+                if (alerts.length > ALERTS_SHOW) {
+                    alerts = alerts.slice(-ALERTS_SHOW);
+                }
+
+                renderAlertsList(alerts);
+                renderAlertsChart(alerts);
+            } catch (err) {
+                console.error("Erro ao buscar alerts:", err);
+            }
+        }
+
+        function renderAlertsList(alerts) {
+            const container = document.getElementById('alerts-list');
+            container.innerHTML = '';
+            if (!alerts.length) {
+                container.innerHTML = '<div style="color:#888;padding:12px;">Sem alertas registrados.</div>';
+                return;
+            }
+
+            // mostra do mais recente para o mais antigo
+            const rev = alerts.slice().reverse();
+            rev.forEach(a => {
+                const div = document.createElement('div');
+                div.className = 'alert-item';
+
+                // nível com badge
+                let lvl = a.level;
+                // normalizar level text
+                let lvlShort = lvl.includes('CRIT') ? 'CRITICO' : (lvl.includes('ATEN') ? 'ATENCAO' : 'NORMAL');
+                const badgeClass = (lvlShort === 'CRITICO') ? 'badge-CRITICO' : (lvlShort === 'ATENCAO' ? 'badge-ATENCAO' : 'badge-NORMAL');
+
+                div.innerHTML = `
+                    <div>
+                        <span class="alert-ts">${a.timestamp}</span>
+                        <span class="alert-service">${a.service}</span>
+                        <span class="badge-level ${badgeClass}">${lvlShort}</span>
+                    </div>
+                    <div style="color:#bbb;margin-top:6px;font-size:0.9rem;">${a.details}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderAlertsChart(alerts) {
+            // labels = timestamps
+            const labels = alerts.map(a => a.timestamp);
+            const data = alerts.map((a, idx) => idx + 1); // valores só para mostrar pontos
+            // colors por ponto
+            const pointColors = alerts.map(a => {
+                const lvl = a.level.toUpperCase();
+                if (lvl.includes('CRIT')) return 'rgba(255,99,132,0.9)'; // vermelho
+                if (lvl.includes('ATEN')) return 'rgba(255,205,86,0.95)'; // amarelo
+                return 'rgba(75,192,192,0.8)'; // verde (NORMAL)
+            });
+
+            const ctx = document.getElementById('chart-alerts').getContext('2d');
+
+            if (alertsChart) {
+                alertsChart.data.labels = labels;
+                alertsChart.data.datasets[0].data = data;
+                alertsChart.data.datasets[0].pointBackgroundColor = pointColors;
+                alertsChart.update();
+                return;
+            }
+
+            alertsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Alertas (últimos ' + ALERTS_SHOW + ')',
+                        data: data,
+                        fill: false,
+                        tension: 0.2,
+                        pointRadius: 6,
+                        borderWidth: 2,
+                        showLine: true,
+                        pointBackgroundColor: pointColors,
+                        borderColor: 'rgba(100,150,220,0.6)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const i = context.dataIndex;
+                                    const a = alerts[i];
+                                    const lvl = a.level;
+                                    return `${a.service} — ${lvl} — ${a.timestamp}`;
+                                }
+                            }
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color:'#ccc', maxRotation:45, minRotation:0 },
+                            title: { display:false }
+                        },
+                        y: {
+                            display: false, // não precisamos do eixo Y real (apenas pontos)
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('btn-clear-alerts').addEventListener('click', async () => {
+            if (!confirm('Confirma limpar todos os alertas?')) return;
+            try {
+                await fetch('/api/alerts/clear', { method: 'POST' });
+                loadAlerts();
+            } catch (e) {
+                console.error("Erro ao limpar alerts:", e);
+            }
+        });
+
+        //--------------------------------------------------------------
+        // LOOP: atualiza dashboard frequentemente, alerts também
+        //--------------------------------------------------------------
+        // Observação: o servidor aplica rate-limit de 10s para envio de e-mails.
+        setInterval(() => {
+            updateDashboard();
+            loadAlerts();
+        }, 3000);
+
+        // carregamento inicial
         updateDashboard();
+        loadAlerts();
+
     </script>
+
 </body>
 </html>
