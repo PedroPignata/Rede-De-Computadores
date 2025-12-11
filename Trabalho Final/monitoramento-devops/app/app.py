@@ -14,7 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 
-# CONFIGURAÇÕES DO AMBIENTE DOCKER 
+# ambiente de monitoramento docker
 SERVICES = {
     'web': {'host': 'web-alvo', 'port': 80, 'name': 'Web Server Nginx'},
     'db':  {'host': 'db-alvo', 'port': 5432, 'name': 'Banco de Dados SQL'},
@@ -30,7 +30,7 @@ FILE_TO_WATCH = 'protegido.conf'
 last_file_hash = None
 security_status = "NORMAL"
 
-# ALERTAS (persistência)
+# alertas 
 ALERTS_FILE = 'alerts.json'
 MAX_ALERTS_STORED = 1000
 alerts_lock = Lock()
@@ -38,17 +38,15 @@ alerts_lock = Lock()
 # Histórico de status (para cálculo de % de segurança)
 STATUS_HISTORY_FILE = 'status_history.json'
 status_lock = Lock()
-STATUS_HISTORY_WINDOW = 100  # número de amostras consideradas ao calcular % de segurança
+STATUS_HISTORY_WINDOW = 100 
 
-# Rate limit de e-mails (segundos)
+# Rate limit de e-mails
 EMAIL_MIN_INTERVAL = 10
 email_last_sent = {}
 email_last_sent_lock = Lock()
 
-
-# -------------------------
 # Utilitários de persistência
-# -------------------------
+
 def load_json_file(path):
     if not os.path.exists(path):
         return []
@@ -66,7 +64,7 @@ def save_json_file(path, data):
     except Exception as e:
         print(f"Erro ao salvar {path}: {e}")
 
-# ALERTS
+# alertas
 def load_alerts():
     return load_json_file(ALERTS_FILE)
 
@@ -93,37 +91,31 @@ def append_alert(service_name, level, details):
     print(f"🗂️ Alerta registrado: {alert}")
     return alert
 
-# STATUS HISTORY
+# historico status
 def load_status_history():
     return load_json_file(STATUS_HISTORY_FILE)
 
 def save_status_history(history):
     try:
-        if len(history) > STATUS_HISTORY_WINDOW * 5:  # manter um buffer maior se quiser
+        if len(history) > STATUS_HISTORY_WINDOW * 5:  
             history = history[-STATUS_HISTORY_WINDOW*5:]
         save_json_file(STATUS_HISTORY_FILE, history)
     except Exception as e:
         print("Erro ao salvar status_history.json:", e)
 
 def append_status_snapshot(snapshot):
-    """
-    snapshot: dict contendo 'timestamp' e chaves por serviço com value igual a level ('NORMAL','ATENCAO','CRITICO')
-    """
+
     with status_lock:
         hist = load_status_history()
         hist.append(snapshot)
         save_status_history(hist)
 
 def compute_secure_pct(service_key, window=STATUS_HISTORY_WINDOW):
-    """
-    Calcula porcentagem de amostras em que service_key estava 'NORMAL'
-    retorna inteiro (0-100)
-    """
+
     with status_lock:
         hist = load_status_history()
         if not hist:
-            return 100  # sem histórico considere 100% por segurança
-        # pegar últimas `window` amostras
+            return 100  
         last = hist[-window:]
         total = 0
         normal_count = 0
@@ -136,10 +128,8 @@ def compute_secure_pct(service_key, window=STATUS_HISTORY_WINDOW):
             return 100
         return int((normal_count / total) * 100)
 
-
-# -------------------------
 # Funções de monitor
-# -------------------------
+
 def get_service_status(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2.0)
@@ -166,12 +156,10 @@ def calculate_file_hash(filepath):
     with open(filepath, 'rb') as f:
         return hashlib.md5(f.read()).hexdigest()
 
+# Envio de e-mail 
 
-# -------------------------
-# Envio de e-mail (com rate-limit)
-# -------------------------
 def can_send_email_for_service(service_name):
-    """Verifica se podemos enviar e-mail (respeitando EMAIL_MIN_INTERVAL)."""
+
     now = time.time()
     with email_last_sent_lock:
         last = email_last_sent.get(service_name)
@@ -184,10 +172,7 @@ def can_send_email_for_service(service_name):
         return False
 
 def send_email_alert(service_name, status, details):
-    """
-    Tenta enviar e-mail. Aplica rate-limit: se tiver sido enviado há menos que EMAIL_MIN_INTERVAL
-    segundos para esse serviço, não tenta envio, mas grava o alerta com observação RATE_LIMITED.
-    """
+
     allowed = can_send_email_for_service(service_name)
     if not allowed:
         # registra alerta mas marca rate limiting
@@ -233,10 +218,8 @@ def send_email_alert(service_name, status, details):
         append_alert(service_name, status + " (EMAIL_FAIL)", f"{details} | erro: {e}")
         return False
 
+# Monitor de integridad
 
-# -------------------------
-# Monitor de integridade (arquivo)
-# -------------------------
 def check_security_job():
     global last_file_hash, security_status
 
@@ -251,19 +234,17 @@ def check_security_job():
         last_file_hash = current_hash
         send_email_alert("SEGURANÇA & INTEGRIDADE", "CRÍTICO", f"Arquivo '{FILE_TO_WATCH}' foi modificado.")
     else:
-        # se estiver normal, garantir status normal (não gera alerta)
+
         security_status = "NORMAL"
 
-
-# Agenda de verificação: agora a cada 10 segundos (ajustado conforme pedido)
+# Agenda de verificação
 scheduler = BackgroundScheduler()
 scheduler.add_job(check_security_job, 'interval', seconds=10)  # --> 10s
 scheduler.start()
 
 
-# -------------------------
 # Rotas da API
-# -------------------------
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -290,7 +271,7 @@ def get_real_status():
             # secure_pct calculado com base no histórico
             'secure_pct': compute_secure_pct(key)
         }
-        # adicionar ao snapshot
+
         snapshot[key] = level
 
     # segurança
@@ -316,10 +297,7 @@ def trigger_email():
 
 @app.route('/api/alerts')
 def api_alerts():
-    """
-    Retorna lista completa de alertas.
-    Frontend usará slice para últimos 25.
-    """
+
     return jsonify({"alerts": load_alerts()})
 
 
@@ -328,10 +306,8 @@ def clear_alerts():
     save_alerts([])
     return jsonify({"ok": True})
 
-
-# -------------------------
 # Inicialização
-# -------------------------
+
 if __name__ == '__main__':
     # garante arquivos existem
     if not os.path.exists(ALERTS_FILE):

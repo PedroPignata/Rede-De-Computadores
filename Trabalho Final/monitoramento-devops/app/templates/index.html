@@ -54,7 +54,6 @@
             margin-top:12px;
         }
 
-        /* Alertas CSS */
         .alert-item { border-bottom: 1px solid #222; padding: 8px 0; }
         .alert-ts { color:#888; font-size:.9rem; margin-right:8px; display:inline-block; width:170px; }
         .alert-service { font-weight:bold; }
@@ -71,7 +70,7 @@
 
     <h2><i class="fa-solid fa-network-wired"></i> Monitoramento de Serviços DevOps</h2>
 
-    <!-- DASHBOARD -->
+    <!-- dashboard -->
     <div class="dashboard-grid">
 
         <div id="card-web" class="card status-NORMAL">
@@ -124,13 +123,13 @@
 
     </div>
 
-    <!-- ALERTAS -->
+    <!-- alertas -->
     <hr style="margin:40px 0;border-color:#222;">
     <h2><i class="fa-solid fa-triangle-exclamation"></i> Alertas & Histórico</h2>
 
     <div style="display:flex; gap:20px; flex-wrap:wrap;">
 
-        <!-- LISTA -->
+        <!-- lista -->
         <div style="flex:1; min-width:340px; background:#0f0f0f; border:1px solid #222; border-radius:8px; padding:20px;">
             <h3>Últimos Alertas
                 <button id="btn-clear-alerts" style="float:right; padding:6px 10px;">Limpar</button>
@@ -138,7 +137,7 @@
             <div id="alerts-list" style="max-height:420px; overflow:auto; margin-top:10px;"></div>
         </div>
 
-        <!-- GRÁFICO -->
+        <!-- grafico -->
         <div style="flex:1; min-width:340px; background:#0f0f0f; border:1px solid #222; border-radius:8px; padding:20px;">
             <h3>Gráfico de Alertas (últimos 25)</h3>
             <canvas id="chart-alerts" height="350"></canvas>
@@ -147,7 +146,7 @@
     </div>
 
 
-    <!-- SCRIPT PRINCIPAL -->
+    <!-- script -->
     <script>
         const lastStates = { web:'NORMAL', db:'NORMAL', smtp:'NORMAL', sec:'NORMAL' };
         const ALERTS_SHOW = 25; // mostrar últimos 25 no gráfico
@@ -190,7 +189,6 @@
             if (id === 'web') document.getElementById('rps-web').innerText = 100 + Math.floor(Math.random()*60);
             if (id === 'db') document.getElementById('qps-db').innerText = 300 + Math.floor(Math.random()*50);
 
-            // Verificar alertas - front-end não manda email rapidamente, server tem rate-limit também
             checkAlert(id, level, name, msg.innerText);
         }
 
@@ -226,9 +224,6 @@
             }
         }
 
-        //--------------------------------------------------------------
-        // ALERTAS (LIST + CHART)
-        //--------------------------------------------------------------
         let alertsChart = null;
 
         async function loadAlerts() {
@@ -237,7 +232,6 @@
                 const payload = await res.json();
                 let alerts = payload.alerts || [];
 
-                // pegar últimos ALERTS_SHOW
                 if (alerts.length > ALERTS_SHOW) {
                     alerts = alerts.slice(-ALERTS_SHOW);
                 }
@@ -257,15 +251,14 @@
                 return;
             }
 
-            // mostra do mais recente para o mais antigo
             const rev = alerts.slice().reverse();
             rev.forEach(a => {
                 const div = document.createElement('div');
                 div.className = 'alert-item';
 
-                // nível com badge
+               
                 let lvl = a.level;
-                // normalizar level text
+                
                 let lvlShort = lvl.includes('CRIT') ? 'CRITICO' : (lvl.includes('ATEN') ? 'ATENCAO' : 'NORMAL');
                 const badgeClass = (lvlShort === 'CRITICO') ? 'badge-CRITICO' : (lvlShort === 'ATENCAO' ? 'badge-ATENCAO' : 'badge-NORMAL');
 
@@ -284,13 +277,13 @@
         function renderAlertsChart(alerts) {
             // labels = timestamps
             const labels = alerts.map(a => a.timestamp);
-            const data = alerts.map((a, idx) => idx + 1); // valores só para mostrar pontos
+            const data = alerts.map((a, idx) => idx + 1); 
             // colors por ponto
             const pointColors = alerts.map(a => {
                 const lvl = a.level.toUpperCase();
-                if (lvl.includes('CRIT')) return 'rgba(255,99,132,0.9)'; // vermelho
-                if (lvl.includes('ATEN')) return 'rgba(255,205,86,0.95)'; // amarelo
-                return 'rgba(75,192,192,0.8)'; // verde (NORMAL)
+                if (lvl.includes('CRIT')) return 'rgba(255,99,132,0.9)';
+                if (lvl.includes('ATEN')) return 'rgba(255,205,86,0.95)'; 
+                return 'rgba(75,192,192,0.8)'; 
             });
 
             const ctx = document.getElementById('chart-alerts').getContext('2d');
@@ -340,7 +333,7 @@
                             title: { display:false }
                         },
                         y: {
-                            display: false, // não precisamos do eixo Y real (apenas pontos)
+                            display: false, 
                         }
                     }
                 }
@@ -357,10 +350,8 @@
             }
         });
 
-        //--------------------------------------------------------------
-        // LOOP: atualiza dashboard frequentemente, alerts também
-        //--------------------------------------------------------------
-        // Observação: o servidor aplica rate-limit de 10s para envio de e-mails.
+
+        // o servidor aplica rate-limit de 10s para envio de e-mails.
         setInterval(() => {
             updateDashboard();
             loadAlerts();

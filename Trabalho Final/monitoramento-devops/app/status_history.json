@@ -194,5 +194,19 @@
     "db": "NORMAL",
     "smtp": "NORMAL",
     "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:45:14",
+    "web": "NORMAL",
+    "db": "ATENCAO",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
+  },
+  {
+    "timestamp": "2025-12-09 09:45:17",
+    "web": "NORMAL",
+    "db": "NORMAL",
+    "smtp": "NORMAL",
+    "sec": "NORMAL"
   }
 ]

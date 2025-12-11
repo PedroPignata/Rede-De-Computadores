@@ -838,5 +838,11 @@
     "service": "SMTP Server",
     "level": "ATENCAO",
     "details": "Latência Alta"
+  },
+  {
+    "timestamp": "2025-12-09 09:45:14",
+    "service": "Banco de Dados SQL",
+    "level": "ATENCAO",
+    "details": "Latência Alta"
   }
 ]
